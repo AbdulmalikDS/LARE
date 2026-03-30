@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Environments
+.env
+.venv
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data — do not commit datasets or model weights
+data/
+*.bin
+*.pt
+*.pth
+*.safetensors
+
+# Logs & outputs
+*.log
+outputs/
+results/
