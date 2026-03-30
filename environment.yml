@@ -8,7 +8,7 @@ dependencies:
   - python=3.10
   - pytorch>=2.0
   - torchvision
-  - cudatoolkit=11.8
+  - pytorch-cuda=12.1
   - pip
   - pip:
     - open_clip_torch>=2.20.0

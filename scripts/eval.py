@@ -8,19 +8,10 @@ import numpy as np
 from tqdm import tqdm
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DATA_ROOT = PROJECT_ROOT.parent / "Semantic Search" / "data"
 sys.path.insert(0, str(PROJECT_ROOT))
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s  %(levelname)-8s  %(message)s", datefmt="%H:%M:%S")
 logger = logging.getLogger(__name__)
-
-DEFAULT_PATHS = {
-    "karpathy":  {"images": DATA_ROOT / "coco/val2014"},
-    "flickr30k": {"images": DATA_ROOT / "Flicker30K/flickr30k/flickr30k-images",
-                  "json":   DATA_ROOT / "Flicker30K/flickr30k/dataset.json"},
-    "dense_set": {"images": DATA_ROOT / "coco/val2014",
-                  "json":   DATA_ROOT / "dense-datasets/val2014/captions_coco_format.json"},
-}
 
 
 def parse_args():
@@ -46,22 +37,24 @@ def main():
     args = parse_args()
     from eval.datasets import load_karpathy, load_flickr30k, load_dense_set
 
-    paths = DEFAULT_PATHS[args.dataset]
-    images_dir = args.images_dir or str(paths["images"])
-
     if args.dataset == "karpathy":
-        images, texts, text_to_image = load_karpathy(images_dir, limit=args.limit)
+        if not args.images_dir:
+            logger.error("--images-dir is required for karpathy (path to COCO val2014 images)")
+            sys.exit(1)
+        images, texts, text_to_image = load_karpathy(args.images_dir, limit=args.limit)
     elif args.dataset == "flickr30k":
+        if not args.images_dir or not args.flickr_json:
+            logger.error("--images-dir and --flickr-json are required for flickr30k")
+            sys.exit(1)
         images, texts, text_to_image = load_flickr30k(
-            images_dir,
-            args.flickr_json or str(paths["json"]),
-            split="test", limit=args.limit,
+            args.images_dir, args.flickr_json, split="test", limit=args.limit,
         )
     elif args.dataset == "dense_set":
+        if not args.images_dir or not args.captions_json:
+            logger.error("--images-dir and --captions-json are required for dense_set")
+            sys.exit(1)
         images, texts, text_to_image = load_dense_set(
-            images_dir,
-            args.captions_json or str(paths["json"]),
-            limit=args.limit,
+            args.images_dir, args.captions_json, limit=args.limit,
         )
 
     if not images:

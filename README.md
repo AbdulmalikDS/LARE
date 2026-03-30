@@ -1,6 +1,6 @@
 # LARE: Low-Attention Region Encoding for Text–Image Retrieval
 
-**CVPRW 2026** | [Project Page](https://falmeshal.github.io/LARE/) | [Dense-Set Dataset](https://huggingface.co/datasets/AbdulmalekDS/Dense-Set)
+**[CVPR 2026](https://cvpr.thecvf.com/) — [MULA Workshop](https://mula-workshop.github.io/)** | [Project Page](https://falmeshal.github.io/LARE/) | [Dense-Set Dataset](https://huggingface.co/datasets/AbdulmalekDS/Dense-Set)
 
 LARE is a training-free method that improves text-image retrieval by detecting overlooked image regions and re-encoding them with the same frozen encoder. A confidence gate decides when global similarity is unreliable and blends in regional evidence.
 
@@ -24,14 +24,24 @@ print(score.score)
 ## Evaluation
 
 ```bash
-# Baseline
-python scripts/eval.py --model siglip --dataset karpathy
+# MS-COCO Karpathy
+python scripts/eval.py --model siglip --dataset karpathy \
+    --images-dir /path/to/coco/val2014
 
-# LARE
-python scripts/eval.py --model siglip --dataset karpathy --pipeline
+# Flickr30k
+python scripts/eval.py --model siglip --dataset flickr30k \
+    --images-dir /path/to/flickr30k/images \
+    --flickr-json /path/to/dataset.json
+
+# Dense-Set
+python scripts/eval.py --model siglip --dataset dense_set \
+    --images-dir /path/to/coco/val2014 \
+    --captions-json /path/to/captions.json
+
+# Add --pipeline to enable LARE (default is baseline)
 ```
 
-Supported datasets: `karpathy`, `flickr30k`, `dense_set`
+Supported models: `clip`, `clip-large`, `clip-336`, `siglip`, `siglip-so400m`, `siglip2`
 
 ## Citation
 
