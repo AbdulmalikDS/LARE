@@ -100,7 +100,7 @@ class CLIPEncoder(BaseEncoder):
 
         with torch.no_grad():
             x = trunk.patch_embed(pixels)
-            x = trunk._pos_embed(x)  # prepends CLS token + positional embedding
+            x = trunk._pos_embed(x)
 
             for i, block in enumerate(trunk.blocks):
                 if i == self._target_layer:
@@ -109,13 +109,12 @@ class CLIPEncoder(BaseEncoder):
                     x = block(x)
 
             x = trunk.norm(x)
-            x = x[:, 0]  # CLS token
+            x = x[:, 0]
             if hasattr(trunk, "fc_norm") and trunk.fc_norm is not None:
                 x = trunk.fc_norm(x)
             embeddings = self.model.visual.head(x) if hasattr(self.model.visual, "head") else x
 
-        # Slice out CLS: keep only patch-to-patch submatrix [:, :, 1:, 1:]
-        patch_attn = full_attn[:, :, 1:, 1:]
+        patch_attn = full_attn[:, :, 1:, 1:]  # remove CLS
         return embeddings, patch_attn
 
     def _timm_block_with_attn(self, block, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
@@ -160,7 +159,7 @@ class CLIPEncoder(BaseEncoder):
             x = vis.ln_post(x[:, 0, :])
             embeddings = x @ vis.proj if vis.proj is not None else x
 
-        patch_attn = full_attn[:, :, 1:, 1:]
+        patch_attn = full_attn[:, :, 1:, 1:]  # remove CLS
         return embeddings, patch_attn
 
     def _openai_block_with_attn(self, block, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:

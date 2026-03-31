@@ -15,7 +15,7 @@ class LARE:
     Augments a frozen dual-encoder at inference time by:
       1. Detecting low-attention regions in the encoder's attention map
       2. Re-encoding each region with the same visual encoder
-      3. Scoring via confidence-gated fusion (LARE paper, Eq. 4)
+      3. Scoring via confidence-gated fusion (paper Eq. 4)
 
     Usage::
 
@@ -23,7 +23,6 @@ class LARE:
         pipeline = create_lare(model="siglip")
 
         score = pipeline.retrieve(image, "a person carrying a red bag")
-        print(score.score)  # confidence-gated similarity
 
         # Batch evaluation
         global_embs, region_embs, _ = pipeline.encode_batch(images)
@@ -40,70 +39,37 @@ class LARE:
         self.encoder = encoder
         self.detector = detector
         self.scorer = scorer
-        # Ensure crop output size matches the encoder's native input resolution
         self.detector.output_size = encoder.config.image_size
-
-    # ------------------------------------------------------------------
-    # Single-image API
-    # ------------------------------------------------------------------
 
     def encode(
         self, image: Image.Image
     ) -> Tuple[np.ndarray, List[np.ndarray], List[BBox]]:
-        """
-        Encode a single image through the full LARE pipeline.
-
-        Returns:
-            global_emb: [D] L2-normalized global image embedding.
-            region_embs: List of [D] region embeddings (may be empty if no regions found).
-            boxes: List of BBox objects corresponding to region_embs.
-        """
+        """Returns (global_emb [D], region_embs, boxes)."""
         enc = self.encoder.encode_image(image)
         boxes = self.detector.detect(enc.attention, image.size)
         crops = self.detector.extract_crops(image, boxes)
-
         region_embs: List[np.ndarray] = []
         if crops:
             region_embs = [o.embedding for o in self.encoder.encode_images_batch(crops)]
-
         return enc.embedding, region_embs, boxes
 
     def retrieve(self, image: Image.Image, query: str) -> RetrievalScore:
-        """
-        Compute the confidence-gated similarity between an image and a text query.
-
-        Args:
-            image: Input PIL image.
-            query: Natural language query string.
-
-        Returns:
-            RetrievalScore with the final score and diagnostic fields.
-        """
+        """Confidence-gated similarity between an image and a text query."""
         global_emb, region_embs, _ = self.encode(image)
         text_emb = self.encoder.encode_text(query)
         return self.scorer.score(text_emb, global_emb, region_embs)
-
-    # ------------------------------------------------------------------
-    # Batch API (optimised for evaluation)
-    # ------------------------------------------------------------------
 
     def encode_batch(
         self, images: List[Image.Image]
     ) -> Tuple[np.ndarray, List[List[np.ndarray]], List[List[BBox]]]:
         """
-        Encode a batch of images through the full LARE pipeline.
+        Encode a batch of images. All crops are batched into a single encoder
+        call, making this much faster than calling encode() in a loop.
 
-        Crops from all images are batched into a single encoder call, making
-        this significantly faster than calling encode() in a loop.
-
-        Returns:
-            global_embs: [N, D] stacked global embeddings.
-            region_embs: List[N] of List[n_regions_i] of [D] arrays.
-            all_boxes: List[N] of List[BBox] per image.
+        Returns: global_embs [N, D], region_embs [N][n_regions], boxes [N].
         """
         enc_outputs = self.encoder.encode_images_batch(images)
 
-        # Collect all crops from all images for a single batch encode call
         all_crops: List[Image.Image] = []
         crop_to_img: List[int] = []
         all_boxes: List[List[BBox]] = []
@@ -116,7 +82,6 @@ class LARE:
                 all_crops.append(crop)
                 crop_to_img.append(i)
 
-        # Batch-encode all crops in one GPU call
         region_embs: List[List[np.ndarray]] = [[] for _ in images]
         if all_crops:
             crop_outputs = self.encoder.encode_images_batch(all_crops)
@@ -125,10 +90,6 @@ class LARE:
 
         global_embs = np.stack([e.embedding for e in enc_outputs])
         return global_embs, region_embs, all_boxes
-
-    # ------------------------------------------------------------------
-    # Text encoding (convenience wrapper)
-    # ------------------------------------------------------------------
 
     def encode_text(self, text: Union[str, List[str]]) -> np.ndarray:
         """Encode one or more text queries. Returns [D] or [N, D]."""
@@ -148,17 +109,13 @@ def create_lare(
     Create a LARE pipeline.
 
     Args:
-        model: Backbone encoder. One of: clip, clip-large, clip-336,
-               siglip, siglip-so400m, siglip2.
+        model: One of: clip, clip-large, clip-336, siglip, siglip-so400m, siglip2.
         n_regions: Number of low-attention regions to extract (paper: N=5).
-        kernel_size: Sliding window size over the attention map (default: 64).
-        stride: Sliding window stride (default: 32).
-        iou_threshold: IoU threshold for NMS region deduplication (default: 0.3).
+        kernel_size: Sliding window size over the attention map.
+        stride: Sliding window stride.
+        iou_threshold: IoU threshold for NMS.
         tau: Confidence threshold for gated scoring (paper: tau=0.25).
         device: "cuda" or "cpu". Auto-detected if None.
-
-    Returns:
-        Fully initialised LARE pipeline.
     """
     encoder = create_encoder(model, device=device)
     detector = RegionDetector(

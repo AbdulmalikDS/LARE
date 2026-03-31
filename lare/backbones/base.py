@@ -48,16 +48,12 @@ class BaseEncoder(ABC):
         top_k_heads: int = 4,
     ) -> np.ndarray:
         """
-        Shared attention processing used by both CLIP and SigLIP.
+        Builds an inverse attention map from patch-to-patch attention weights.
+        Shape: [B, H, N_patch, N_patch] (CLS already removed for CLIP).
 
-        Input `patch_attn` must contain only patch-to-patch attention weights
-        (CLS row/column already removed for CLIP). Shape: [B, H, N_patch, N_patch].
-
-        Paper Eq. 1: a^(h)_i = sum_j A^(h)_{j,i}
-        Column-wise sum gives the total attention each patch receives.
-        Patches that receive little attention are "overlooked" background regions.
-
-        Returns [B, image_size, image_size] or [image_size, image_size] for B=1.
+        Paper Eq. 1: column-wise sum gives total attention each patch receives.
+        Inverted so low-attention (overlooked) regions have high values.
+        Returns [B, image_size, image_size].
         """
         B, H, N, _ = patch_attn.shape
         grid = self.config.grid_size
