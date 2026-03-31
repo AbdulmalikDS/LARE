@@ -80,4 +80,4 @@ class BaseEncoder(ABC):
             resized = cv2.resize(mean_attn, (size, size), interpolation=cv2.INTER_LINEAR)
             batch_maps.append((1.0 - resized).astype(np.float32))
 
-        return np.stack(batch_maps) if B > 1 else batch_maps[0]
+        return np.stack(batch_maps)  # always [B, H, W]

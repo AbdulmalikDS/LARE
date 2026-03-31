@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 _MODELS = {
     "siglip":        ("ViT-B-16-SigLIP",           "webli"),
-    "siglip-base":   ("ViT-B-16-SigLIP",           "webli"),
     "siglip-so400m": ("ViT-SO400M-14-SigLIP-384",  "webli"),
     "siglip2":       ("ViT-SO400M-16-SigLIP2-384", "webli"),
 }
@@ -63,8 +62,7 @@ class SigLIPEncoder(BaseEncoder):
         inv_maps = self._build_inverse_attention(patch_attn)
         outputs = []
         for i in range(len(images)):
-            inv = inv_maps[i] if inv_maps.ndim == 3 else inv_maps
-            outputs.append(EncoderOutput(embedding=emb_np[i], attention=inv))
+            outputs.append(EncoderOutput(embedding=emb_np[i], attention=inv_maps[i]))
         return outputs
 
     def encode_text(self, text) -> np.ndarray:

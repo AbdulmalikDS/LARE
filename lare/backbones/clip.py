@@ -81,8 +81,7 @@ class CLIPEncoder(BaseEncoder):
         inv_maps = self._build_inverse_attention(patch_attn)
         outputs = []
         for i in range(len(images)):
-            inv = inv_maps[i] if inv_maps.ndim == 3 else inv_maps
-            outputs.append(EncoderOutput(embedding=emb_np[i], attention=inv))
+            outputs.append(EncoderOutput(embedding=emb_np[i], attention=inv_maps[i]))
         return outputs
 
     def encode_text(self, text) -> np.ndarray:
@@ -146,8 +145,8 @@ class CLIPEncoder(BaseEncoder):
 
         with torch.no_grad():
             x = vis.conv1(pixels).reshape(pixels.shape[0], vis.conv1.out_channels, -1).permute(0, 2, 1)
-            cls = vis.class_embedding.to(x.dtype)
-            cls = cls + torch.zeros(x.shape[0], 1, x.shape[-1], dtype=x.dtype, device=x.device)
+            cls = vis.class_embedding.to(dtype=x.dtype, device=x.device)
+            cls = cls[None, None, :].expand(x.shape[0], -1, -1)
             x = torch.cat([cls, x], dim=1)
             x = x + vis.positional_embedding.to(x.dtype)
             x = vis.ln_pre(x)
