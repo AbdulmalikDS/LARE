@@ -41,11 +41,13 @@ class SigLIPEncoder(BaseEncoder):
         self._target_layer = max(0, n_blocks - 7)
 
         pe = trunk.patch_embed
+        _img_size = pe.img_size[0] if hasattr(pe, "img_size") else 384
+        _patch_size = pe.patch_size[0] if hasattr(pe, "patch_size") else 14
         self.config = EncoderConfig(
-            image_size=pe.img_size[0] if hasattr(pe, "img_size") else 384,
+            image_size=_img_size,
             embed_dim=trunk.embed_dim,
-            patch_size=pe.patch_size[0] if hasattr(pe, "patch_size") else 14,
-            grid_size=pe.grid_size[0],
+            patch_size=_patch_size,
+            grid_size=pe.grid_size[0] if hasattr(pe, "grid_size") else _img_size // _patch_size,
         )
         logger.info(f"SigLIP: {oc_name} | {self.config.image_size}px | layer {self._target_layer}/{n_blocks}")
 

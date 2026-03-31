@@ -44,11 +44,13 @@ class CLIPEncoder(BaseEncoder):
             n_blocks = len(trunk.blocks)
             self._target_layer = max(0, n_blocks - 3)
             pe = trunk.patch_embed
+            _img_size = pe.img_size[0] if hasattr(pe, "img_size") else 224
+            _patch_size = pe.patch_size[0] if hasattr(pe, "patch_size") else 14
             self.config = EncoderConfig(
-                image_size=pe.img_size[0] if hasattr(pe, "img_size") else 224,
+                image_size=_img_size,
                 embed_dim=self.model.visual.output_dim if hasattr(self.model.visual, "output_dim") else trunk.embed_dim,
-                patch_size=pe.patch_size[0] if hasattr(pe, "patch_size") else 14,
-                grid_size=pe.grid_size[0],
+                patch_size=_patch_size,
+                grid_size=pe.grid_size[0] if hasattr(pe, "grid_size") else _img_size // _patch_size,
             )
             logger.info(f"CLIP (timm): {oc_name} | {self.config.image_size}px | layer {self._target_layer}/{n_blocks}")
         else:
