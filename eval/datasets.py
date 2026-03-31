@@ -4,13 +4,11 @@ Dataset loaders for LARE evaluation.
 Each loader returns:
     images          : List[PIL.Image]
     texts           : List[str]
-    text_to_image   : np.ndarray[int, shape=(N_text,)]
-                      text_to_image[i] = index into `images` for query i
+    text_to_image   : np.ndarray[int]  —  text_to_image[i] = image index for query i
 """
 
 import json
 import logging
-import os
 from collections import defaultdict
 from pathlib import Path
 from typing import List, Tuple
@@ -24,24 +22,11 @@ logger = logging.getLogger(__name__)
 ReturnType = Tuple[List[Image.Image], List[str], np.ndarray]
 
 
-# ---------------------------------------------------------------------------
-# MS-COCO Karpathy test split (loaded from HuggingFace)
-# ---------------------------------------------------------------------------
-
 def load_karpathy(images_dir: str, limit: int = None) -> ReturnType:
-    """
-    Load the MS-COCO Karpathy test split.
-
-    Captions are sourced from HuggingFace (yerevann/coco-karpathy).
-    Each image has 5 reference captions.
-
-    Args:
-        images_dir: Directory containing COCO val2014 images.
-        limit: If set, only load the first `limit` images (for debugging).
-    """
+    """MS-COCO Karpathy test split (captions from HuggingFace yerevann/coco-karpathy)."""
     from datasets import load_dataset
 
-    logger.info("Loading MS-COCO Karpathy test split from HuggingFace...")
+    logger.info("Loading MS-COCO Karpathy test split...")
     dataset = load_dataset("yerevann/coco-karpathy", split="test")
     if limit:
         dataset = dataset.select(range(min(limit, len(dataset))))
@@ -55,13 +40,11 @@ def load_karpathy(images_dir: str, limit: int = None) -> ReturnType:
         path = _resolve_path(images_dir, filename)
         if path is None:
             continue
-
         try:
             img = Image.open(path).convert("RGB")
         except Exception as e:
             logger.warning(f"Cannot open {path}: {e}")
             continue
-
         images.append(img)
         for cap in item["sentences"]:
             texts.append(cap)
@@ -72,37 +55,19 @@ def load_karpathy(images_dir: str, limit: int = None) -> ReturnType:
     return images, texts, _build_index(text_to_image_map, txt_idx)
 
 
-# ---------------------------------------------------------------------------
-# Flickr30k Karpathy test split (loaded from local JSON)
-# ---------------------------------------------------------------------------
-
 def load_flickr30k(
     images_dir: str,
     dataset_json: str,
     split: str = "test",
     limit: int = None,
 ) -> ReturnType:
-    """
-    Load a Flickr30k split from the Karpathy-style dataset.json.
-
-    The JSON is a list (or {"images": [...]}) of dicts, each with:
-      - "filename": image filename
-      - "split": "train" | "val" | "test"
-      - "sentences": list of {"raw": "caption text", ...}
-
-    Args:
-        images_dir: Directory containing Flickr30k images.
-        dataset_json: Path to dataset.json.
-        split: Which split to load (default "test").
-        limit: Optional debug limit on number of images.
-    """
-    logger.info(f"Loading Flickr30k '{split}' split from {dataset_json}...")
-    with open(dataset_json, "r") as f:
+    """Flickr30k split from a Karpathy-style dataset.json."""
+    logger.info(f"Loading Flickr30k '{split}' split...")
+    with open(dataset_json) as f:
         raw = json.load(f)
 
     entries = raw["images"] if isinstance(raw, dict) and "images" in raw else raw
     entries = [e for e in entries if e.get("split") == split]
-    logger.info(f"  {len(entries)} entries with split='{split}'")
     if limit:
         entries = entries[:limit]
 
@@ -118,17 +83,14 @@ def load_flickr30k(
         if path is None:
             logger.warning(f"Image not found: {filename}")
             continue
-
         try:
             img = Image.open(path).convert("RGB")
         except Exception as e:
             logger.warning(f"Cannot open {path}: {e}")
             continue
-
         images.append(img)
         for s in item.get("sentences", []):
-            cap = s.get("raw") or s.get("sentence") or s.get("text") or str(s)
-            texts.append(cap)
+            texts.append(s.get("raw") or s.get("sentence") or s.get("text") or str(s))
             text_to_image_map[txt_idx] = img_idx
             txt_idx += 1
         img_idx += 1
@@ -136,32 +98,14 @@ def load_flickr30k(
     return images, texts, _build_index(text_to_image_map, txt_idx)
 
 
-# ---------------------------------------------------------------------------
-# Dense-Set (COCO-style JSON with re-captioned images)
-# ---------------------------------------------------------------------------
-
 def load_dense_set(
     images_dir: str,
     captions_json: str,
     limit: int = None,
 ) -> ReturnType:
-    """
-    Load the Dense-Set benchmark (COCO annotation format).
-
-    Dense-Set is a subset of MS-COCO / Flickr30k curated to contain images
-    with high object density and rare object instances (Section 3 of LARE paper).
-    Captions are re-written to emphasise low-attention, previously overlooked objects.
-
-    The JSON follows the standard COCO annotation format:
-      {"images": [...], "annotations": [{"image_id": ..., "caption": ...}, ...]}
-
-    Args:
-        images_dir: Directory containing the source dataset images.
-        captions_json: Path to the Dense-Set COCO-format captions JSON.
-        limit: Optional debug limit on number of images.
-    """
+    """Dense-Set benchmark in COCO annotation format."""
     logger.info(f"Loading Dense-Set from {captions_json}...")
-    with open(captions_json, "r") as f:
+    with open(captions_json) as f:
         data = json.load(f)
 
     id_to_filename = {img["id"]: img["file_name"] for img in data["images"]}
@@ -182,13 +126,11 @@ def load_dense_set(
         path = _resolve_path(images_dir, filename)
         if path is None:
             continue
-
         try:
             img = Image.open(path).convert("RGB")
         except Exception as e:
             logger.warning(f"Cannot open {path}: {e}")
             continue
-
         images.append(img)
         for cap in img_captions[img_id]:
             texts.append(cap)
@@ -200,20 +142,12 @@ def load_dense_set(
     return images, texts, _build_index(text_to_image_map, txt_idx)
 
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
 def _resolve_path(directory: str, filename: str):
-    """Try to find `filename` in `directory`, returning the path or None."""
     p = Path(directory) / filename
     if p.exists():
         return p
-    # Try bare basename (in case filename contains a subdirectory component)
     p2 = Path(directory) / Path(filename).name
-    if p2.exists():
-        return p2
-    return None
+    return p2 if p2.exists() else None
 
 
 def _build_index(mapping: dict, n_texts: int) -> np.ndarray:
