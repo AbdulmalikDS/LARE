@@ -33,14 +33,14 @@ bash scripts/reproduce.sh
 Or evaluate a single benchmark:
 
 ```bash
-# COCO Karpathy
+# COCO
 python scripts/eval.py --model siglip-so400m --dataset karpathy \
     --images-dir /path/to/coco/val2014 [--pipeline]
 
 # Flickr30K
 python scripts/eval.py --model siglip-so400m --dataset flickr30k \
     --images-dir /path/to/flickr30k-images \
-    --flickr-json benchmarks/captions/flickr30k_karpathy.json [--pipeline]
+    --flickr-json benchmarks/captions/flickr30k.json [--pipeline]
 
 # COCO-Dense
 python scripts/eval.py --model siglip-so400m --dataset dense_set \

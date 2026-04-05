@@ -3,7 +3,7 @@
 All numbers are **Text → Image Recall@K (%)** on the full test split, SigLIP So/14
 (`siglip-so400m`), single Quadro RTX 8000.
 
-## COCO Karpathy (5000 images, 25000 captions)
+## COCO (5000 test images, 25000 captions)
 
 | Method     | R@1   | R@5   | R@10  |
 |------------|-------|-------|-------|
