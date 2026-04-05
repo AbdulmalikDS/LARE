@@ -11,7 +11,4 @@ Images are not committed — download from:
 | `captions/flickr30k.json` | Flickr30K | 31783 |
 | `captions/flickr30k_dense.json` | Flickr30K-Dense | 2477 |
 
-> `coco.json` is provided for reference. `scripts/eval.py --dataset karpathy`
-> fetches the same split automatically from HuggingFace (`yerevann/coco-karpathy`).
-
 See [`../RESULTS.md`](../RESULTS.md) for expected numbers.

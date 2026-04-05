@@ -19,10 +19,9 @@ score = pipeline.retrieve(image, "a person carrying a red bag")
 print(score.score)
 ```
 
-## Reproducing paper numbers
+## Reproduce
 
-Expected numbers are in [`RESULTS.md`](RESULTS.md). Caption files are in
-[`data/captions/`](data/). Run everything with:
+Expected numbers are in [`RESULTS.md`](RESULTS.md). Run all benchmarks with:
 
 ```bash
 COCO_DIR=/path/to/coco/val2014 \
@@ -54,14 +53,11 @@ Supported models: `clip`, `clip-large`, `clip-336`, `siglip`, `siglip-so400m`, `
 ## Repository layout
 
 ```
-lare/           Paper implementation (frozen — used for reproduction)
-lare_plus/      Experimental research branch (DINOv3 backbone, PC1 saliency — unstable)
-eval/           Dataset loaders and R@K metrics
-scripts/        Evaluation + visualization scripts
+lare/       Method implementation
+eval/       Dataset loaders and R@K metrics
+data/       Caption files
+scripts/    Evaluation scripts
 ```
-
-Only `lare/` is needed to reproduce Table 3 numbers. `lare_plus/` is an in-progress
-research direction and is **not** used by `scripts/eval.py` or `scripts/reproduce.sh`.
 
 ## Citation
 
