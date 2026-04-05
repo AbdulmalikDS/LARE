@@ -40,12 +40,12 @@ python scripts/eval.py --model siglip-so400m --dataset karpathy \
 # Flickr30K
 python scripts/eval.py --model siglip-so400m --dataset flickr30k \
     --images-dir /path/to/flickr30k-images \
-    --flickr-json benchmarks/captions/flickr30k_dataset.json [--pipeline]
+    --flickr-json benchmarks/captions/flickr30k_karpathy.json [--pipeline]
 
 # COCO-Dense
 python scripts/eval.py --model siglip-so400m --dataset dense_set \
     --images-dir /path/to/coco/val2014 \
-    --captions-json benchmarks/captions/MSCOCO_val2014_denseset_blip.json [--pipeline]
+    --captions-json benchmarks/captions/coco_dense.json [--pipeline]
 ```
 
 Add `--pipeline` to enable LARE; omit for baseline global-only scoring.
