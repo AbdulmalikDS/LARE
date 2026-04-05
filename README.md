@@ -21,34 +21,31 @@ print(score.score)
 
 ## Reproducing paper numbers
 
-Target numbers from Table 3 (SigLIP So/14) are listed in [`RESULTS.md`](RESULTS.md).
-Run all benchmarks with one command:
+Expected numbers are in [`RESULTS.md`](RESULTS.md). Caption files are in
+[`benchmarks/captions/`](benchmarks/). Run everything with:
 
 ```bash
 COCO_DIR=/path/to/coco/val2014 \
-FLICKR_DIR=/path/to/flickr30k-images FLICKR_JSON=/path/to/dataset.json \
-DENSESET_JSON=/path/to/dense_set_captions.json \
-bash scripts/reproduce.sh siglip-so400m
+FLICKR_DIR=/path/to/flickr30k-images \
+bash scripts/reproduce.sh
 ```
-
-Dense-Set caption files are committed in [`benchmarks/captions/`](benchmarks/) — see
-[`benchmarks/README.md`](benchmarks/README.md) for exact expected numbers per file.
 
 Or evaluate a single benchmark:
 
 ```bash
-# COCO Karpathy (5000 images)
+# COCO Karpathy
 python scripts/eval.py --model siglip-so400m --dataset karpathy \
     --images-dir /path/to/coco/val2014 [--pipeline]
 
-# Flickr30K (1000 test images)
+# Flickr30K
 python scripts/eval.py --model siglip-so400m --dataset flickr30k \
-    --images-dir /path/to/flickr30k-images --flickr-json /path/to/dataset.json [--pipeline]
+    --images-dir /path/to/flickr30k-images \
+    --flickr-json benchmarks/captions/flickr30k_dataset.json [--pipeline]
 
-# COCO-Dense (3089 images)
+# COCO-Dense
 python scripts/eval.py --model siglip-so400m --dataset dense_set \
     --images-dir /path/to/coco/val2014 \
-    --captions-json /path/to/dense_set_captions.json [--pipeline]
+    --captions-json benchmarks/captions/MSCOCO_val2014_denseset_blip.json [--pipeline]
 ```
 
 Add `--pipeline` to enable LARE; omit for baseline global-only scoring.
