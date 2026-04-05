@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-# Usage:
-#   COCO_DIR=/path/to/val2014 FLICKR_DIR=/path/to/flickr30k-images \
-#   bash scripts/reproduce.sh [model]
-
 set -euo pipefail
 
 MODEL=${1:-siglip-so400m}
