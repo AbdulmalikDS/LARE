@@ -5,9 +5,9 @@ MODEL=${1:-siglip-so400m}
 COCO_DIR=${COCO_DIR:-}
 FLICKR_DIR=${FLICKR_DIR:-}
 
-FLICKR_JSON=benchmarks/captions/flickr30k.json
-COCO_DENSE_JSON=benchmarks/captions/coco_dense.json
-FLICKR_DENSE_JSON=benchmarks/captions/flickr30k_dense.json
+FLICKR_JSON=data/captions/flickr30k.json
+COCO_DENSE_JSON=data/captions/coco_dense.json
+FLICKR_DENSE_JSON=data/captions/flickr30k_dense.json
 
 run() {
     echo

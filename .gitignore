@@ -13,7 +13,9 @@ build/
 .venv
 env/
 .ipynb_checkpoints/
-data/
+data/*
+!data/captions/
+!data/README.md
 *.bin
 *.pt
 *.pth

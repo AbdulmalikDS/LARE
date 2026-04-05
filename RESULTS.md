@@ -23,7 +23,7 @@ Paper Table 3: baseline 82.94 / 96.08 / 98.00, LARE 82.94 / 96.12 / 98.00.
 
 ## COCO-Dense (3089 images)
 
-Using `benchmarks/captions/coco_dense.json`:
+Using `data/captions/coco_dense.json`:
 
 | Method   | R@1   | R@5   | R@10  |
 |----------|-------|-------|-------|
@@ -35,7 +35,7 @@ caption file used for the paper is still being located.
 
 ## Flickr30K-Dense (2477 images)
 
-Using `benchmarks/captions/flickr30k_dense.json`:
+Using `data/captions/flickr30k_dense.json`:
 
 | Method   | R@1   | R@5   | R@10  |
 |----------|-------|-------|-------|

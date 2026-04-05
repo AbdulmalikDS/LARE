@@ -1,4 +1,4 @@
-# Benchmark caption files
+# Caption files
 
 Images are not committed — download from:
 - COCO val2014: <https://cocodataset.org/#download>
