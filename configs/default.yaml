@@ -1,7 +1,7 @@
 # LARE default configuration
 # These are the paper's reported settings (Section 4 and ablation in Appendix A.1)
 
-model: siglip-so400m
+model: siglip-so400m  # clip, clip-large, clip-336, siglip, siglip-so400m, siglip2
 
 detector:
   kernel_size: 64     # Sliding window size in attention map pixels
