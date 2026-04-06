@@ -21,7 +21,7 @@ print(score.score)
 
 ## Reproduce
 
-Expected numbers are in [`RESULTS.md`](RESULTS.md). Run all benchmarks with:
+Expected numbers are in [`RESULTS.md`](RESULTS.md). Run all benchmarks:
 
 ```bash
 COCO_DIR=/path/to/coco/val2014 \
@@ -29,35 +29,23 @@ FLICKR_DIR=/path/to/flickr30k-images \
 bash scripts/reproduce.sh
 ```
 
-Or evaluate a single benchmark:
+Or a single benchmark:
 
 ```bash
-# COCO
 python scripts/eval.py --model siglip-so400m --dataset karpathy \
     --images-dir /path/to/coco/val2014 [--pipeline]
 
-# Flickr30K
 python scripts/eval.py --model siglip-so400m --dataset flickr30k \
     --images-dir /path/to/flickr30k-images \
     --flickr-json data/captions/flickr30k.json [--pipeline]
 
-# COCO-Dense
 python scripts/eval.py --model siglip-so400m --dataset dense_set \
     --images-dir /path/to/coco/val2014 \
     --captions-json data/captions/coco_dense.json [--pipeline]
 ```
 
-Add `--pipeline` to enable LARE; omit for baseline global-only scoring.
+Add `--pipeline` to enable LARE; omit for baseline.
 Supported models: `clip`, `clip-large`, `clip-336`, `siglip`, `siglip-so400m`, `siglip2`.
-
-## Repository layout
-
-```
-lare/       Method implementation
-eval/       Dataset loaders and R@K metrics
-data/       Caption files
-scripts/    Evaluation scripts
-```
 
 ## Citation
 
