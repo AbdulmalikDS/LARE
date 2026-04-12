@@ -26,6 +26,8 @@ def parse_args():
     p.add_argument("--flickr-json", default=None)
     p.add_argument("--n-regions", type=int, default=5)
     p.add_argument("--tau", type=float, default=0.25)
+    p.add_argument("--csls-k", type=int, default=10,
+                   help="CSLS neighbourhood size for hub correction (0 to disable)")
     p.add_argument("--device", default=None)
     p.add_argument("--img-batch-size", type=int, default=32)
     p.add_argument("--txt-batch-size", type=int, default=128)
@@ -64,7 +66,8 @@ def main():
     logger.info(f"Loaded {len(images)} images, {len(texts)} queries")
 
     from lare import create_lare
-    pipeline = create_lare(model=args.model, n_regions=args.n_regions, tau=args.tau, device=args.device)
+    csls_k = args.csls_k if args.pipeline else 0
+    pipeline = create_lare(model=args.model, n_regions=args.n_regions, tau=args.tau, csls_k=csls_k, device=args.device)
 
     # Encode images
     all_global, all_regions = [], []
