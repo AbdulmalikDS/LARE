@@ -11,16 +11,42 @@ class RetrievalScore:
     best_region_sim: float
 
 
+def csls_rerank(sim: np.ndarray, k: int = 10) -> np.ndarray:
+    """
+    Cross-domain Similarity Local Scaling (Conneau et al., 2018).
+
+    Corrects hubness bias by penalising embeddings that are uniformly
+    close to many neighbours in the other modality:
+
+        CSLS(q, i) = 2·cos(q, i) - mean_kNN_img(q) - mean_kNN_txt(i)
+
+    Args:
+        sim: [N_query, N_gallery] similarity matrix.
+        k: Number of neighbours for the mean kNN estimate.
+
+    Returns:
+        Reranked similarity matrix of the same shape.
+    """
+    topk_per_query = np.sort(sim, axis=1)[:, -k:]
+    r_T = topk_per_query.mean(axis=1, keepdims=True)
+    topk_per_gallery = np.sort(sim, axis=0)[-k:, :]
+    r_S = topk_per_gallery.mean(axis=0, keepdims=True)
+    return 2 * sim - r_T - r_S
+
+
 class ConfidenceGatedScoring:
     """
     Paper Eq. 4:
       S = s_g                                    if s_g >= tau
       S = (1 - alpha)*s_g + alpha*s_r            if s_r > s_g, alpha = min(2*(s_r-s_g), 0.5)
       S = s_g                                    otherwise
+
+    Optionally applies CSLS hub-correction after gated fusion.
     """
 
-    def __init__(self, tau: float = 0.25):
+    def __init__(self, tau: float = 0.25, csls_k: int = 10):
         self.tau = tau
+        self.csls_k = csls_k
 
     def score(
         self,
@@ -56,7 +82,10 @@ class ConfidenceGatedScoring:
             alpha = np.minimum(2.0 * np.where(use_region, s_r - s_g, 0.0), 0.5)
             sim[i] = np.where(use_region, (1.0 - alpha) * s_g + alpha * s_r, s_g)
 
-        return sim.T  # [N_text, N_image]
+        sim_t2i = sim.T  # [N_text, N_image]
+        if self.csls_k > 0:
+            sim_t2i = csls_rerank(sim_t2i, k=self.csls_k)
+        return sim_t2i
 
     def _gate(self, s_g: float, s_r: float) -> float:
         if s_g >= self.tau:

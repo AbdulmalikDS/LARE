@@ -20,6 +20,7 @@ class EncoderConfig:
 class EncoderOutput:
     embedding: np.ndarray  # [D] L2-normalized
     attention: np.ndarray  # [H, W] inverse attention map in [0, 1]
+    patch_embeddings: Optional[np.ndarray] = None  # [N_patches, D] projected patch tokens
 
 
 class BaseEncoder(ABC):

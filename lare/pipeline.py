@@ -103,6 +103,7 @@ def create_lare(
     stride: int = 32,
     iou_threshold: float = 0.3,
     tau: float = 0.25,
+    csls_k: int = 10,
     device: str = None,
 ) -> LARE:
     """
@@ -115,6 +116,7 @@ def create_lare(
         stride: Sliding window stride.
         iou_threshold: IoU threshold for NMS.
         tau: Confidence threshold for gated scoring (paper: tau=0.25).
+        csls_k: CSLS hub-correction neighbourhood size (0 to disable).
         device: "cuda" or "cpu". Auto-detected if None.
     """
     encoder = create_encoder(model, device=device)
@@ -125,5 +127,5 @@ def create_lare(
         iou_threshold=iou_threshold,
         output_size=encoder.config.image_size,
     )
-    scorer = ConfidenceGatedScoring(tau=tau)
+    scorer = ConfidenceGatedScoring(tau=tau, csls_k=csls_k)
     return LARE(encoder, detector, scorer)
