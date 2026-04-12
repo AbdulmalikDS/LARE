@@ -21,15 +21,21 @@ print(score.score)
 
 ## Reproduce
 
-Expected numbers are in [`RESULTS.md`](RESULTS.md). Run all benchmarks:
+Hardware: Evaluation scripts run comfortably out-of-the-box on a single **NVIDIA 24GB GPU** (e.g., RTX 3090, 4090, or A10g).
+
+First, see [`data/README.md`](data/README.md) for quick instructions on where to download the COCO and Flickr30K image sets. 
+
+Expected benchmark numbers are clearly tabulated in [`RESULTS.md`](RESULTS.md).
+
+Run all benchmarks using our automation script:
 
 ```bash
 COCO_DIR=/path/to/coco/val2014 \
 FLICKR_DIR=/path/to/flickr30k-images \
-bash scripts/reproduce.sh
+bash scripts/reproduce_all.sh
 ```
 
-Or a single benchmark:
+Or a single manual run:
 
 ```bash
 python scripts/eval.py --model siglip-so400m --dataset karpathy \
