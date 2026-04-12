@@ -27,12 +27,12 @@ First, see [`data/README.md`](data/README.md) for quick instructions on where to
 
 Expected benchmark numbers are clearly tabulated in [`RESULTS.md`](RESULTS.md).
 
-Run all benchmarks using our automation script:
+Run all benchmarks:
 
 ```bash
 COCO_DIR=/path/to/coco/val2014 \
 FLICKR_DIR=/path/to/flickr30k-images \
-bash scripts/reproduce_all.sh
+bash scripts/reproduce.sh
 ```
 
 Or a single manual run:
