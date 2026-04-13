@@ -25,10 +25,10 @@ print(score.score)
 
 ## Reproduce Results
 
-> **Hardware**: All benchmarks were evaluated natively on **NVIDIA Quadro RTX 8000** GPUs. Because LARE relies on efficient inference atop frozen models (e.g., 400M parameters), a standard **11GB–16GB consumer GPU** is sufficient to reproduce results.
+> **Hardware**: All benchmarks were evaluated on NVIDIA Quadro RTX 8000 GPUs. However, a standard 11GB-16GB GPU is sufficient to reproduce the results.
 
 1. Download images required in [`data/README.md`](data/README.md).
-2. All baseline vs LARE benchmark expectations are tabulated cleanly in [`RESULTS.md`](RESULTS.md).
+2. Benchmark results are available in [`RESULTS.md`](RESULTS.md).
 
 Run standard benchmark evaluations:
 
