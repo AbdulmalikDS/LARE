@@ -27,7 +27,7 @@ print(score.score)
 
 ## Reproduce Results
 
-> **Hardware**: All benchmarks were evaluated natively on dual **NVIDIA Quadro RTX 8000 (48GB)** GPUs. A single 24GB GPU is sufficient.
+> **Hardware**: All benchmarks were evaluated natively on **NVIDIA Quadro RTX 8000** GPUs. Because LARE relies on efficient inference atop frozen models (e.g., 400M parameters), a standard **11GB–16GB consumer GPU** is perfectly sufficient to reproduce these tables.
 
 1. Download images required in [`data/README.md`](data/README.md).
 2. All baseline vs LARE benchmark expectations are tabulated cleanly in [`RESULTS.md`](RESULTS.md).
