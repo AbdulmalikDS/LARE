@@ -1,8 +1,16 @@
 # Caption files
 
-Images are not committed — download from:
-- COCO val2014: <https://cocodataset.org/#download>
-- Flickr30K: <https://github.com/BryanPlummer/flickr30k_entities>
+Images are not committed due to their large size. Please download them locally:
+
+### 1. MS-COCO 2014
+To download the MS-COCO 2014 Validation split natively via your terminal:
+```bash
+wget http://images.cocodataset.org/zips/val2014.zip
+unzip val2014.zip
+```
+
+### 2. Flickr30K
+Flickr30K requires explicit permission from researchers. Download the `flickr30k-images` dataset formally via the [Kaggle repository](https://www.kaggle.com/datasets/hsankesara/flickr-image-dataset) or the [official Illinois University entity page](https://github.com/BryanPlummer/flickr30k_entities).
 
 | File | Dataset | N_img |
 |------|---------|------:|

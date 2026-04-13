@@ -39,19 +39,14 @@ conda activate lare
 ```
 
 **Step 2. Download Datasets**
-Create a data directory and download the MS-COCO 2014 validation split (you can also provide Flickr30k):
-```bash
-mkdir -p datasets/coco
-wget http://images.cocodataset.org/zips/val2014.zip -O datasets/coco/val2014.zip
-unzip datasets/coco/val2014.zip -d datasets/coco/
-```
+Head to [`data/README.md`](data/README.md) for quick instructions and `wget` scripts on how to download the MS-COCO and Flickr30K image sets locally.
 
 **Step 3. Run Benchmark Scripts**
-Pass the directory to the reproduction script. It will automatically test the baseline and LARE pipeline on standard and Dense-Set annotations.
+Pass the dataset directory to the reproduction script. It will evaluate the baseline and LARE pipeline natively against standard and Dense-Set annotations.
 
 ```bash
-COCO_DIR=datasets/coco/val2014 \
-# FLICKR_DIR=datasets/flickr30k-images \
+COCO_DIR=/path/to/coco/val2014 \
+FLICKR_DIR=/path/to/flickr30k-images \
 bash scripts/reproduce.sh siglip-so400m
 ```
 
