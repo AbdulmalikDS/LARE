@@ -11,7 +11,7 @@
 
 </div>
 
-## ⚔️ Quick Start
+## Quick Start
 
 ```bash
 conda env create -f environment.yml
@@ -26,7 +26,7 @@ score = pipeline.retrieve(image, "a person carrying a red bag")
 print(score.score)
 ```
 
-## 🛡️ Reproduce Results
+## Reproduce Results
 
 > **Hardware**: All benchmarks were evaluated on two NVIDIA Quadro RTX 8000 GPUs. However, a standard 11GB-16GB GPU is sufficient to reproduce the results.
 
