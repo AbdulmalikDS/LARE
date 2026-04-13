@@ -1,6 +1,6 @@
 <div align="center">
 
-# LARE: Low-Attention Region Encoding for Text–Image Retrieval
+# 🌌 LARE: Low-Attention Region Encoding for Text–Image Retrieval
 
 **[CVPR 2026 — MULA Workshop](https://mula-workshop.github.io/)** | [Project Page](https://falmeshal.github.io/LARE/) | [Dense-Set Dataset](https://huggingface.co/datasets/AbdulmalekDS/Dense-Set)
 
@@ -8,12 +8,10 @@
 
 <br>
 <img src="docs/image1.png" width="90%" alt="LARE Details">
-<br>
-<img src="docs/image2.png" width="90%" alt="LARE Examples">
 
 </div>
 
-## Quick Start
+## ⚔️ Quick Start
 
 ```bash
 conda env create -f environment.yml
@@ -28,7 +26,7 @@ score = pipeline.retrieve(image, "a person carrying a red bag")
 print(score.score)
 ```
 
-## Reproduce Results
+## 🛡️ Reproduce Results
 
 > **Hardware**: All benchmarks were evaluated on two NVIDIA Quadro RTX 8000 GPUs. However, a standard 11GB-16GB GPU is sufficient to reproduce the results.
 
@@ -43,7 +41,7 @@ FLICKR_DIR=/path/to/flickr30k-images \
 bash scripts/reproduce.sh
 ```
 
-## Citation
+## 📜 Citation
 
 ```bibtex
 @inproceedings{alquwayfili2026lare,
