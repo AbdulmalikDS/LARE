@@ -4,7 +4,7 @@
 
 **[CVPR 2026 — MULA Workshop](https://mula-workshop.github.io/)** | [Project Page](https://falmeshal.github.io/LARE/) | [Dense-Set Dataset](https://huggingface.co/datasets/AbdulmalekDS/Dense-Set)
 
-LARE is a training-free inference method that boosts text-image retrieval by autonomously detecting overlooked semantic regions and re-encoding them via a confidence gate.
+**LARE** is a training-free inference method that tackles the *"hubness"* problem and "bag-of-words" failures in text-to-image retrieval. By operating entirely atop frozen Vision-Language Models (e.g., CLIP, SigLIP), LARE dynamically detects mathematically ignored semantic regions, extracts fine-grained local embeddings, and fuses them via an adaptive confidence gate—achieving state-of-the-art zero-shot dense retrieval without requiring a single epoch of fine-tuning.
 
 <img src="docs/pipeline.png" width="90%" alt="Replace with your paper's pipeline graph">
 
@@ -27,7 +27,7 @@ print(score.score)
 
 ## Reproduce Results
 
-> **Hardware**: All benchmarks were evaluated natively on **NVIDIA Quadro RTX 8000** GPUs. Because LARE relies on efficient inference atop frozen models (e.g., 400M parameters), a standard **11GB–16GB consumer GPU** is perfectly sufficient to reproduce these tables.
+> **Hardware**: All benchmarks were evaluated natively on **NVIDIA Quadro RTX 8000** GPUs. Because LARE relies on efficient inference atop frozen models (e.g., 400M parameters), a standard **11GB–16GB consumer GPU** is sufficient to reproduce results.
 
 1. Download images required in [`data/README.md`](data/README.md).
 2. All baseline vs LARE benchmark expectations are tabulated cleanly in [`RESULTS.md`](RESULTS.md).
