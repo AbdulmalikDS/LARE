@@ -6,6 +6,11 @@
 
 **LARE** is a training-free augmentation for text-to-image retrieval in crowded scenes. Our method mines low-attention regions from a frozen vision encoder, encodes these regions alongside the full image, and combines regional embeddings with the global image embedding at inference time. This simple test-time procedure improves retrieval on Dense-Set variants that emphasize subtle and occluded content.
 
+<br>
+<img src="docs/image1.png" width="90%" alt="LARE Details">
+<br>
+<img src="docs/image2.png" width="90%" alt="LARE Examples">
+
 </div>
 
 ## Quick Start
@@ -25,7 +30,7 @@ print(score.score)
 
 ## Reproduce Results
 
-> **Hardware**: All benchmarks were evaluated on NVIDIA Quadro RTX 8000 GPUs. However, a standard 11GB-16GB GPU is sufficient to reproduce the results.
+> **Hardware**: All benchmarks were evaluated on two NVIDIA Quadro RTX 8000 GPUs. However, a standard 11GB-16GB GPU is sufficient to reproduce the results.
 
 1. Download images required in [`data/README.md`](data/README.md).
 2. Benchmark results are available in [`RESULTS.md`](RESULTS.md).
