@@ -30,15 +30,29 @@ print(score.score)
 
 > **Hardware**: All benchmarks were evaluated on two NVIDIA Quadro RTX 8000 GPUs. However, a standard 11GB-16GB GPU is sufficient to reproduce the results.
 
-1. Download images required in [`data/README.md`](data/README.md).
-2. Benchmark results are available in [`RESULTS.md`](RESULTS.md).
+**Step 1. Clone & Environment**
+```bash
+git clone https://github.com/AbdulmalikDS/LARE.git
+cd LARE
+conda env create -f environment.yml
+conda activate lare
+```
 
-Run standard benchmark evaluations:
+**Step 2. Download Datasets**
+Create a data directory and download the MS-COCO 2014 validation split (you can also provide Flickr30k):
+```bash
+mkdir -p datasets/coco
+wget http://images.cocodataset.org/zips/val2014.zip -O datasets/coco/val2014.zip
+unzip datasets/coco/val2014.zip -d datasets/coco/
+```
+
+**Step 3. Run Benchmark Scripts**
+Pass the directory to the reproduction script. It will automatically test the baseline and LARE pipeline on standard and Dense-Set annotations.
 
 ```bash
-COCO_DIR=/path/to/coco/val2014 \
-FLICKR_DIR=/path/to/flickr30k-images \
-bash scripts/reproduce.sh
+COCO_DIR=datasets/coco/val2014 \
+# FLICKR_DIR=datasets/flickr30k-images \
+bash scripts/reproduce.sh siglip-so400m
 ```
 
 ## 📜 Citation
