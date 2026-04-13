@@ -4,9 +4,7 @@
 
 **[CVPR 2026 — MULA Workshop](https://mula-workshop.github.io/)** | [Project Page](https://falmeshal.github.io/LARE/) | [Dense-Set Dataset](https://huggingface.co/datasets/AbdulmalekDS/Dense-Set)
 
-**LARE** is a training-free inference method that tackles the *"hubness"* problem and "bag-of-words" failures in text-to-image retrieval. By operating entirely atop frozen Vision-Language Models (e.g., CLIP, SigLIP), LARE dynamically detects mathematically ignored semantic regions, extracts fine-grained local embeddings, and fuses them via an adaptive confidence gate—achieving state-of-the-art zero-shot dense retrieval without requiring a single epoch of fine-tuning.
-
-<img src="docs/pipeline.png" width="90%" alt="Replace with your paper's pipeline graph">
+**LARE** is a training-free augmentation for text-to-image retrieval in crowded scenes. Our method mines low-attention regions from a frozen vision encoder, encodes these regions alongside the full image, and combines regional embeddings with the global image embedding at inference time. This simple test-time procedure improves retrieval on Dense-Set variants that emphasize subtle and occluded content.
 
 </div>
 
