@@ -1,10 +1,16 @@
+<div align="center">
+
 # LARE: Low-Attention Region Encoding for Text–Image Retrieval
 
 **[CVPR 2026 — MULA Workshop](https://mula-workshop.github.io/)** | [Project Page](https://falmeshal.github.io/LARE/) | [Dense-Set Dataset](https://huggingface.co/datasets/AbdulmalekDS/Dense-Set)
 
-LARE is a training-free method that improves text-image retrieval by detecting overlooked image regions and re-encoding them with the same frozen encoder. A confidence gate decides when global similarity is unreliable and blends in regional evidence.
+LARE is a training-free inference method that boosts text-image retrieval by autonomously detecting overlooked semantic regions and re-encoding them via a confidence gate.
 
-## Quick start
+<img src="docs/pipeline.png" width="90%" alt="Replace with your paper's pipeline graph">
+
+</div>
+
+## Quick Start
 
 ```bash
 conda env create -f environment.yml
@@ -19,39 +25,20 @@ score = pipeline.retrieve(image, "a person carrying a red bag")
 print(score.score)
 ```
 
-## Reproduce
+## Reproduce Results
 
-Hardware: Evaluation scripts run comfortably out-of-the-box on a single **NVIDIA 24GB GPU** (e.g., RTX 3090, 4090, or A10g).
+> **Hardware**: All benchmarks were evaluated natively on dual **NVIDIA Quadro RTX 8000 (48GB)** GPUs. A single 24GB GPU is sufficient.
 
-First, see [`data/README.md`](data/README.md) for quick instructions on where to download the COCO and Flickr30K image sets. 
+1. Download images required in [`data/README.md`](data/README.md).
+2. All baseline vs LARE benchmark expectations are tabulated cleanly in [`RESULTS.md`](RESULTS.md).
 
-Expected benchmark numbers are clearly tabulated in [`RESULTS.md`](RESULTS.md).
-
-Run all benchmarks:
+Run standard benchmark evaluations:
 
 ```bash
 COCO_DIR=/path/to/coco/val2014 \
 FLICKR_DIR=/path/to/flickr30k-images \
 bash scripts/reproduce.sh
 ```
-
-Or a single manual run:
-
-```bash
-python scripts/eval.py --model siglip-so400m --dataset karpathy \
-    --images-dir /path/to/coco/val2014 [--pipeline]
-
-python scripts/eval.py --model siglip-so400m --dataset flickr30k \
-    --images-dir /path/to/flickr30k-images \
-    --flickr-json data/captions/flickr30k.json [--pipeline]
-
-python scripts/eval.py --model siglip-so400m --dataset dense_set \
-    --images-dir /path/to/coco/val2014 \
-    --captions-json data/captions/coco_dense.json [--pipeline]
-```
-
-Add `--pipeline` to enable LARE; omit for baseline.
-Supported models: `clip`, `clip-large`, `clip-336`, `siglip`, `siglip-so400m`, `siglip2`.
 
 ## Citation
 
