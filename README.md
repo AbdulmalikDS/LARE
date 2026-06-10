@@ -2,7 +2,7 @@
 
 # 🌌 LARE: Low-Attention Region Encoding for Text–Image Retrieval
 
-**[ICML 2026 EMMQA Workshop](https://openreview.net/forum?id=42bo30qeLe)** | [Project Page](https://falmeshal.github.io/LARE/) | [Dense-Set Dataset](https://huggingface.co/datasets/AbdulmalekDS/Dense-Set)
+**[ICML 2026 EMMQA Workshop](https://openreview.net/forum?id=42bo30qeLe)** | [Dense-Set Dataset](https://huggingface.co/datasets/AbdulmalekDS/Dense-Set)
 
 **LARE** is a training-free augmentation for text-to-image retrieval in crowded scenes. Our method mines low-attention regions from a frozen vision encoder, encodes these regions alongside the full image, and combines regional embeddings with the global image embedding at inference time. This simple test-time procedure improves retrieval on Dense-Set variants that emphasize subtle and occluded content.
 
