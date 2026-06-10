@@ -2,7 +2,7 @@
 
 # 🌌 LARE: Low-Attention Region Encoding for Text–Image Retrieval
 
-**[CVPR 2026 — MULA Workshop](https://mula-workshop.github.io/)** | [Project Page](https://falmeshal.github.io/LARE/) | [Dense-Set Dataset](https://huggingface.co/datasets/AbdulmalekDS/Dense-Set)
+**[ICML 2026 EMMQA Workshop](https://openreview.net/forum?id=42bo30qeLe)** | [Project Page](https://falmeshal.github.io/LARE/) | [Dense-Set Dataset](https://huggingface.co/datasets/AbdulmalekDS/Dense-Set)
 
 **LARE** is a training-free augmentation for text-to-image retrieval in crowded scenes. Our method mines low-attention regions from a frozen vision encoder, encodes these regions alongside the full image, and combines regional embeddings with the global image embedding at inference time. This simple test-time procedure improves retrieval on Dense-Set variants that emphasize subtle and occluded content.
 
@@ -56,9 +56,11 @@ bash scripts/reproduce.sh siglip-so400m
 @inproceedings{alquwayfili2026lare,
   title={LARE: Low-Attention Region Encoding for Text--Image Retrieval},
   author={Abdulmalik Alquwayfili and Faisal Almeshal and Jumanah Almajnouni
-          and Leena Alotaibi and Huda Alamri and Muhammad Kamran J Khan},
-  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and
-             Pattern Recognition Workshops (CVPRW)},
-  year={2026}
+          and Leena Alotaibi and Faisal Alhajari and Mohammed Alkhrashi
+          and Alreem Almuhrij and Abdullah Aldwyish and Raied Aljadaany
+          and Huda Alamri and Muhammad Kamran J. Khan},
+  booktitle={ICML 2026 Workshop on Efficient Multimodal Question Answering (EMMQA)},
+  year={2026},
+  url={https://openreview.net/forum?id=42bo30qeLe}
 }
 ```
