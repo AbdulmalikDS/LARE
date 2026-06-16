@@ -58,18 +58,15 @@ class SigLIPEncoder(BaseEncoder):
         if not images:
             return []
         pixels = torch.stack([self.preprocess(img) for img in images]).to(self.device)
-        embeddings, patch_attn, patch_tokens = self._forward(pixels)
+        embeddings, patch_attn = self._forward(pixels)
         embeddings = embeddings / (embeddings.norm(dim=-1, keepdim=True) + 1e-8)
         emb_np = embeddings.cpu().numpy()
         inv_maps = self._build_inverse_attention(patch_attn)
-        # Project patches to shared embedding space
-        patch_embs = self._project_patches(patch_tokens)
         outputs = []
         for i in range(len(images)):
             outputs.append(EncoderOutput(
                 embedding=emb_np[i],
                 attention=inv_maps[i],
-                patch_embeddings=patch_embs[i],
             ))
         return outputs
 
@@ -82,52 +79,6 @@ class SigLIPEncoder(BaseEncoder):
             emb = emb / (emb.norm(dim=-1, keepdim=True) + 1e-8)
         result = emb.cpu().numpy()
         return result[0] if is_single else result
-
-    def encode_text_tokens(self, text) -> Tuple[np.ndarray, List[np.ndarray]]:
-        """Encode text and return both [CLS] embedding and per-token embeddings.
-
-        Returns:
-            cls_embs: [N, D] pooled text embeddings
-            token_embs_list: list of [n_tokens, D] per text (content tokens only)
-        """
-        texts = [text] if isinstance(text, str) else list(text)
-        tm = self.model.text
-        with torch.no_grad():
-            tokens = self.tokenizer(texts).to(self.device)
-            x = tm.token_embedding(tokens)
-            x = x + tm.positional_embedding
-            x = x.permute(1, 0, 2)
-            x = tm.transformer(x)
-            x = x.permute(1, 0, 2)
-            x = tm.ln_final(x)
-            all_token_feats = tm.text_projection(x)  # [B, seq_len, D]
-            all_token_feats = all_token_feats / (all_token_feats.norm(dim=-1, keepdim=True) + 1e-8)
-
-            # Pooled (last non-pad token for SigLIP)
-            cls_embs = self.model.encode_text(tokens)
-            cls_embs = cls_embs / (cls_embs.norm(dim=-1, keepdim=True) + 1e-8)
-
-        cls_np = cls_embs.cpu().numpy()
-        token_feats_np = all_token_feats.cpu().numpy()
-
-        # Extract only content tokens (non-padding)
-        token_embs_list = []
-        tokens_np = tokens.cpu().numpy()
-        pad_id = tm.pad_id if hasattr(tm, 'pad_id') else 0
-        # SigLIP uses 1 as pad, SigLIP2 uses 0 — also exclude EOS
-        for i in range(len(texts)):
-            t = tokens_np[i]
-            # Find content: non-pad and non-zero (handles both models)
-            mask = (t != pad_id) & (t != 0) if pad_id != 0 else (t != 0)
-            # For SigLIP (pad=0 reported but actual pad=1): use first contiguous non-1 block
-            if pad_id == 0 and 1 in t:
-                first_pad = np.where(t == 1)[0]
-                if len(first_pad) > 0 and first_pad[0] > 0:
-                    mask = np.zeros(len(t), dtype=bool)
-                    mask[:first_pad[0]] = True
-            token_embs_list.append(token_feats_np[i][mask])
-
-        return cls_np, token_embs_list
 
     def _forward(self, pixels: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         trunk = self.model.visual.trunk
@@ -146,7 +97,6 @@ class SigLIPEncoder(BaseEncoder):
                     x = block(x)
 
             x = trunk.norm(x)
-            patch_tokens = x  # [B, N_patches, D] — before pooling
 
             if hasattr(trunk, "attn_pool") and trunk.attn_pool is not None:
                 x = trunk.attn_pool(x)
@@ -156,20 +106,7 @@ class SigLIPEncoder(BaseEncoder):
                 x = trunk.fc_norm(x)
             embeddings = self.model.visual.head(x) if hasattr(self.model.visual, "head") else x
 
-        return embeddings, patch_attn, patch_tokens
-
-    def _project_patches(self, patch_tokens: torch.Tensor) -> np.ndarray:
-        """Project patch tokens through the visual head to the shared embedding space."""
-        with torch.no_grad():
-            head = self.model.visual.head if hasattr(self.model.visual, "head") else None
-            if head is not None:
-                B, N, D = patch_tokens.shape
-                flat = patch_tokens.reshape(B * N, D)
-                projected = head(flat).reshape(B, N, -1)
-            else:
-                projected = patch_tokens
-            projected = projected / (projected.norm(dim=-1, keepdim=True) + 1e-8)
-        return projected.cpu().numpy()
+        return embeddings, patch_attn
 
     def _block_with_attn(self, block, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         B, N, C = x.shape
