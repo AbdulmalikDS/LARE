@@ -17,10 +17,6 @@ class BBox:
     def area(self) -> int:
         return max(0, self.x2 - self.x1) * max(0, self.y2 - self.y1)
 
-    @property
-    def center(self) -> Tuple[float, float]:
-        return ((self.x1 + self.x2) / 2.0, (self.y1 + self.y2) / 2.0)
-
 
 class RegionDetector:
     """Sliding-window region detection + IoU NMS + crop extraction."""
