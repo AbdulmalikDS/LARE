@@ -14,9 +14,8 @@ Flickr30K requires explicit permission from researchers. Download the `flickr30k
 
 | File | Dataset | N_img |
 |------|---------|------:|
-| `captions/coco.json` | COCO test split | 5000 |
 | `captions/coco_dense.json` | COCO-Dense | 3089 |
-| `captions/flickr30k.json` | Flickr30K | 31783 |
+| `captions/flickr30k.json` | Flickr30K (test split) | 1000 |
 | `captions/flickr30k_dense.json` | Flickr30K-Dense | 2477 |
 
 See [`../RESULTS.md`](../RESULTS.md) for expected numbers.
