@@ -18,4 +18,3 @@ dependencies:
     - opencv-python>=4.7.0
     - tqdm>=4.65
     - datasets>=2.14.0
-    - pyyaml>=6.0
