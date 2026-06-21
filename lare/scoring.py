@@ -57,7 +57,7 @@ class ConfidenceGatedScoring:
         s_g = float(np.dot(text_emb, global_emb))
         s_r = max((float(np.dot(text_emb, r)) for r in region_embs), default=s_g)
         return RetrievalScore(
-            score=self._gate(s_g, s_r),
+            score=float(self._fuse(np.float64(s_g), np.float64(s_r))),
             global_sim=s_g,
             best_region_sim=s_r,
         )
@@ -76,21 +76,15 @@ class ConfidenceGatedScoring:
                 continue
             s_r = np.array(regions) @ text_embs.T  # [n_r, N_text]
             s_r = s_r.max(axis=0)                   # [N_text]
-            s_g = sim[i]
-
-            use_region = (s_g < self.tau) & (s_r > s_g)
-            alpha = np.minimum(2.0 * np.where(use_region, s_r - s_g, 0.0), 0.5)
-            sim[i] = np.where(use_region, (1.0 - alpha) * s_g + alpha * s_r, s_g)
+            sim[i] = self._fuse(sim[i], s_r)
 
         sim_t2i = sim.T  # [N_text, N_image]
         if self.csls_k > 0:
             sim_t2i = csls_rerank(sim_t2i, k=self.csls_k)
         return sim_t2i
 
-    def _gate(self, s_g: float, s_r: float) -> float:
-        if s_g >= self.tau:
-            return s_g
-        if s_r > s_g:
-            alpha = min(2.0 * (s_r - s_g), 0.5)
-            return (1.0 - alpha) * s_g + alpha * s_r
-        return s_g
+    def _fuse(self, s_g: np.ndarray, s_r: np.ndarray) -> np.ndarray:
+        """Paper Eq. 4, vectorized over scalars or arrays alike."""
+        use_region = (s_g < self.tau) & (s_r > s_g)
+        alpha = np.minimum(2.0 * np.where(use_region, s_r - s_g, 0.0), 0.5)
+        return np.where(use_region, (1.0 - alpha) * s_g + alpha * s_r, s_g)
